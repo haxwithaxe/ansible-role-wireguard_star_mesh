@@ -1,0 +1,81 @@
+---
+
+- name: Install wireguard and tools
+  package:
+    name:
+      - wireguard
+      - wireguard-tools
+  become: yes
+
+- name: Ensure config dir exists
+  file:
+    path: "{{ wireguard_config_path }}/{{ wireguard_network_name }}"
+    mode: 0600
+    state: directory
+  become: yes
+
+- name: Generate private key
+  shell:
+    cmd: "umask 077 && wg genkey > {{ wireguard_config_path }}/{{ wireguard_network_name }}/privatekey"
+    creates: "{{ wireguard_config_path }}/{{ wireguard_network_name }}/privatekey"
+  become: yes
+
+- name: Load private key
+  shell: "cat {{ wireguard_config_path }}/{{ wireguard_network_name }}/privatekey"
+  register: wireguard_private_key
+  changed_when: false
+  become: yes
+
+- name: Generate public key
+  shell:
+    cmd: "wg pubkey < {{ wireguard_config_path }}/{{ wireguard_network_name }}/privatekey > {{ wireguard_config_path }}/{{ wireguard_network_name }}/publickey"
+    creates: "{{ wireguard_config_path }}/{{ wireguard_network_name }}/publickey"
+  become: yes
+
+- name: Load public key
+  shell: "cat {{ wireguard_config_path }}/{{ wireguard_network_name }}/publickey"
+  register: wireguard_public_key
+  changed_when: false
+  become: yes
+
+- name: Generate Preshared Key Pair
+  shell:
+    cmd: "wg genpsk > {{ wireguard_config_path }}/{{ wireguard_network_name }}/psk-{{ item }}"
+    creates: "{{ wireguard_config_path }}/{{ wireguard_network_name }}/psk-{{ item }}"
+  when: inventory_hostname < item
+  with_items: "{{ groups['all'] }}"
+  become: yes
+
+- name: Load preshared keys
+  shell:
+    cmd: "cat {{ wireguard_config_path }}/{{ wireguard_network_name }}/psk-{{ item }}"
+  register: wireguard_preshared_key
+  changed_when: false
+  when: inventory_hostname < item
+  with_items: "{{ groups['all'] }}"
+  become: yes
+
+- name: Map preshared keys
+  set_fact: "wireguard_preshared_keys={{ wireguard_preshared_keys | default({}) | combine({item.item: item.stdout}) }}"
+  when: item.skipped is not defined
+  with_items: "{{ wireguard_preshared_key.results }}"
+  become: yes
+
+- debug: var=wireguard_allowed_ips
+
+- name: "Setup wireguard network {{ wireguard_network_name }} config"
+  template:
+    src: templates/network_name.conf
+    dest: /etc/wireguard/{{ wireguard_network_name }}.conf
+    owner: root
+    group: root
+    mode: 0600
+  become: yes
+  notify: "restart_{{ wireguard_network_name }}"
+
+- name: "Enable/start wg-quick@{{ wireguard_network_name }}.service"
+  systemd:
+    name: "wg-quick@{{ wireguard_network_name }}.service"
+    state: started
+    enabled: yes
+  become: yes

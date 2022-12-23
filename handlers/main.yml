@@ -1,0 +1,7 @@
+---
+
+- name: "restart_{{ wireguard_network_name }}"
+  systemd:
+    name: "wg-quick@{{ wireguard_network_name }}.service"
+    state: restarted
+  become: yes

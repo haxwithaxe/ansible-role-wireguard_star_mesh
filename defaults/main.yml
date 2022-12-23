@@ -1,0 +1,8 @@
+---
+
+wireguard_port: 51820
+
+wireguard_config_path: /etc/wireguard
+wireguard_network_name: wg0
+
+wireguard_overwrite_config: no
