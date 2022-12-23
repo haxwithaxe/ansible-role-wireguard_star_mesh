@@ -1,4 +1,4 @@
-Role Name
+wireguard_star_mesh
 =========
 
 Setup a star topology point to point wireguard mesh.
