@@ -6,3 +6,4 @@ wireguard_config_path: /etc/wireguard
 wireguard_network_name: wg0
 
 wireguard_overwrite_config: no
+wireguard_group_name: all

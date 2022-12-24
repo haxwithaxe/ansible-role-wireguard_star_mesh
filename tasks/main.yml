@@ -43,7 +43,7 @@
     cmd: "wg genpsk > {{ wireguard_config_path }}/{{ wireguard_network_name }}/psk-{{ item }}"
     creates: "{{ wireguard_config_path }}/{{ wireguard_network_name }}/psk-{{ item }}"
   when: inventory_hostname < item
-  with_items: "{{ groups['all'] }}"
+  with_items: "{{ groups[wireguard_group_name] }}"
   become: yes
 
 - name: Load preshared keys
@@ -52,7 +52,7 @@
   register: wireguard_preshared_key
   changed_when: false
   when: inventory_hostname < item
-  with_items: "{{ groups['all'] }}"
+  with_items: "{{ groups[wireguard_group_name] }}"
   become: yes
 
 - name: Map preshared keys
