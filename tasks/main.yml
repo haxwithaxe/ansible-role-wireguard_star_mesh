@@ -3,7 +3,6 @@
 - name: Install wireguard and tools
   package:
     name:
-      - wireguard
       - wireguard-tools
   become: yes
 
@@ -60,8 +59,6 @@
   when: item.skipped is not defined
   with_items: "{{ wireguard_preshared_key.results }}"
   become: yes
-
-- debug: var=wireguard_allowed_ips
 
 - name: "Setup wireguard network {{ wireguard_network_name }} config"
   template:
