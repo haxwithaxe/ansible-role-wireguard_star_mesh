@@ -1,0 +1,45 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: wireguard-ks-zero
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+  - name: wireguard-ks-one
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+  - name: wireguard-ks-two
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        etc_hosts_suffix: ".testnet"
+        wireguard_network_name: testnet
+        wireguard_port: 12345
+    host_vars:
+      wireguard-ks-zero:
+        wireguard_ip: 10.254.254.10
+        wireguard_allowed_ips:
+          - 10.254.253.0/24
+          - 10.254.252.0/24
+        wireguard_endpoint: wireguard-ks-zero.testnet
+        wireguard_port: 54321
+        wireguard_allowed_ip_cidr: 31
+      wireguard-ks-one:
+        wireguard_ip: 10.254.254.111
+        wireguard_endpoint: wireguard-ks-one.testnet
+        wireguard_allowed_ip_cidr: 31
+      wireguard-ks-two:
+        wireguard_ip: 10.254.254.222
+        wireguard_endpoint: wireguard-ks-two.testnet
+        wireguard_allowed_ip_cidr: 31
+verifier:
+  name: testinfra

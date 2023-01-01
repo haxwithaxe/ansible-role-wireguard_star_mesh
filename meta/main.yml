@@ -1,0 +1,26 @@
+galaxy_info:
+  author: haxwithaxe
+  namespace: haxwithaxe
+  description: 
+
+  license: GPL-3.0-only
+
+  min_ansible_version: 2.1
+
+  platforms:
+    - name: Debian
+      versions:
+        - 11
+    - name: Ubuntu
+      versions:
+        - 22.04
+
+  galaxy_tags: 
+    - debian
+    - ubuntu
+    - wireguard
+    - networking
+    - mesh
+    - system
+
+dependencies: []

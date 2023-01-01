@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: wireguard-defaults-zero
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+  - name: wireguard-defaults-one
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+  - name: wireguard-defaults-two
+    box: ${VAGRANT_BOX:-"generic/debian11"}
+    memory: 512
+    cpu: 2
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      wireguard-defaults-zero:
+        wireguard_ip: 10.254.254.10
+      wireguard-defaults-one:
+        wireguard_ip: 10.254.254.111
+      wireguard-defaults-two:
+        wireguard_ip: 10.254.254.222
+verifier:
+  name: testinfra

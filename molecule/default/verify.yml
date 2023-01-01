@@ -1,0 +1,15 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: wireguard-zero
+  gather_facts: false
+  tasks:
+  - name: Check wireguard interface is up
+    shell: "ip -j addr show dev wg0"
+    register: ip_wg0
+    changed_when: no
+
+  - name: Assert wireguard interface is up
+    ansible.builtin.assert:
+      that: ip_wg0.stdout | regex('.*, "flags":\[[^]]"UP"')
