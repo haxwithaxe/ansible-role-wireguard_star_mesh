@@ -105,4 +105,4 @@ GPLv3
 Author Information
 ------------------
 
-haxwithaxe spam@haxwithaxe.net
+Created by (haxwithaxe)[https://github.com/haxwithaxe]
