@@ -68,7 +68,7 @@
     group: root
     mode: 0600
   become: yes
-  notify: "restart_{{ wireguard_network_name }}"
+  notify: restart_wireguard_networks
 
 - name: "Enable/start wg-quick@{{ wireguard_network_name }}.service"
   systemd:
